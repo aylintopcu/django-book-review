@@ -1,0 +1,161 @@
+{% extends 'bookcatalog/index.html' %}
+
+{% load crispy_forms_tags %}
+
+{% load static %}
+
+{% block title %}{{ book.title }}{% endblock title %}
+
+{% block style %}
+	<link href="{% static 'bookcatalog/css/stars.css' %}" rel="stylesheet">
+{% endblock style %}
+
+{% block content %}
+	<div class="buster-light">
+		<div class="hero mv-single-hero">
+		</div>
+		<div class="page-single movie-single movie_single">
+			<div class="container">
+				<div class="row ipad-width2">
+					<div class="col-md-4 col-sm-12 col-xs-12">
+						<div class="movie-img sticky-sb">
+							<img src={{ book.cover_page_url }} style="width: 500px; height: 500px;">
+						</div>
+					</div>
+					<div class="col-md-8 col-sm-12 col-xs-12">
+						<div class="movie-single-ct main-content">
+							<h1 class="bd-hd">{{ book.title }}</h1>
+							{% block review %}
+							<div class="social-btn">
+								{% if user.is_authenticated %}
+									{% for reading_list in reading_lists %}
+										<a href="#" class="parent-btn" name="add_to_list" value="{{ reading_list.id }}">
+											{% if reading_list.list_name in book_in_list %}
+												<i class="ion-checkmark"></i>
+											{% else %}
+												<i class="ion-plus"></i>
+											{% endif %}
+											{{ reading_list.list_name }}
+										</a>
+									{% endfor %}
+								{% endif %}
+							</div>
+							
+							<div class="movie-rate">
+								<div class="rate">
+									<i class="ion-android-star"></i>
+									<p><span>{% if book.avg_rating != 0 %}{{ book.avg_rating }}{% else %} - {% endif %}</span> /5<br>
+										<span class="rv">{{ num_reviews }} Reviews</span>
+									</p>
+								</div>
+								<div class="rate-star"></div>
+							</div>
+							<div class="movie-tabs">
+								<div class="tabs">
+									<ul class="tab-links tabs-mv">
+										<li class="active"><a href="#overview">Overview</a></li>
+										<li><a href="#reviews"> Reviews</a></li>
+									</ul>
+									<div class="tab-content">
+										<div id="overview" class="tab active">
+											<div class="row">
+												<div class="col-md-8 col-sm-12 col-xs-12">
+													<p>{{ book.description }}</p>
+												</div>
+												<div class="col-md-4 col-xs-12 col-sm-12">
+													<div class="sb-it">
+														<h6>Author: </h6>
+														<p>{{ book.author }}</p>
+													</div>
+													<div class="sb-it">
+														<h6>Genre: </h6>
+														<p>{{ book.genre }}</p>
+													</div>
+												</div>
+											</div>
+										</div>
+											<div id="reviews" class="tab review">
+												<div class="row">
+													<div class="topbar-filter">
+														<p>Found <span>{{ num_reviews }} review{{ num_reviews|pluralize }}</span> in total</p>
+													</div>
+													{% for review in reviews %}
+														<div class="mv-user-review-item">
+															<h3>{{ review.created_by }}</h3>
+															<div class="no-star">
+																{% with ''|center:review.rating as range %}
+																	{% for i in range %}
+																		<i class="fas fa-star"></i>
+																	{% endfor %}
+																{% endwith %}
+															</div>
+															<p>{{ review.comments }}</p>
+															<p class="time">
+																{{ review.created_at }}
+															</p>
+															{% if review.created_by == reader %}
+																<a href="{% url 'bookcatalog:edit_review' book.id %}" class="redbtn" style="float: right;"><i class="far fa-edit"></i> Edit</a>
+																<br><br>
+															{% endif %}
+														</div>
+													{% endfor %}
+													
+													{% if user.is_authenticated %}
+														{% if not reviewed %}
+															<h3>Add review</h3>
+															<form method="POST" novalidate style="width: 700px;">
+																{% csrf_token %}
+																<div id="stars" style="margin: 20px;">
+																	<div class="rating-group">
+																		<input disabled checked class="rating__input rating__input--none" name="rating3" id="rating3-none" value="0" type="radio">
+																		<label aria-label="1 star" class="rating__label" for="rating3-1"><i class="rating__icon rating__icon--star fa fa-star"></i></label>
+																		<input class="rating__input" name="rating3" id="rating3-1" value="1" type="radio">
+																		<label aria-label="2 stars" class="rating__label" for="rating3-2"><i class="rating__icon rating__icon--star fa fa-star"></i></label>
+																		<input class="rating__input" name="rating3" id="rating3-2" value="2" type="radio">
+																		<label aria-label="3 stars" class="rating__label" for="rating3-3"><i class="rating__icon rating__icon--star fa fa-star"></i></label>
+																		<input class="rating__input" name="rating3" id="rating3-3" value="3" type="radio">
+																		<label aria-label="4 stars" class="rating__label" for="rating3-4"><i class="rating__icon rating__icon--star fa fa-star"></i></label>
+																		<input class="rating__input" name="rating3" id="rating3-4" value="4" type="radio">
+																		<label aria-label="5 stars" class="rating__label" for="rating3-5"><i class="rating__icon rating__icon--star fa fa-star"></i></label>
+																		<input class="rating__input" name="rating3" id="rating3-5" value="5" type="radio">
+																	</div>
+																</div>
+																{{ form|crispy }}
+																<button class="redbtn" name="submit_review" type="submit" style="margin: 1rem;">Add Review</button>
+															</form>
+														{% endif %}
+													{% endif %}
+												</div>
+											</div>
+										{% endblock review %}
+									</div>
+								</div>
+							</div>
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+	<script src="https://code.jquery.com/jquery-3.4.1.js" integrity="sha256-WpOohJOqMqqyKL9FccASB9O0KwACQJpFTUBLTYOVvVU=" crossorigin="anonymous"></script>
+	<script>
+		$("a[name='add_to_list']").click(function(){
+			var button = $(this);
+			  $.ajax({
+					type: "POST",
+					url: "{% url 'bookcatalog:add_to_list' book.pk %}",
+					data: {'reading_list_id': $(this).attr('value'), 'csrfmiddlewaretoken': '{{ csrf_token }}'},
+					dataType: "json",
+					success: function() {
+						if (button.find('i').hasClass('ion-plus')) {
+							button.find('i').removeClass('ion-plus');
+                    		button.find('i').addClass('ion-checkmark');
+						} else if (button.find('i').hasClass('ion-checkmark')){
+							button.find('i').removeClass('ion-checkmark');
+                    		button.find('i').addClass('ion-plus');
+						}
+					}
+				}); 
+			})
+	</script>
+{% endblock content %}

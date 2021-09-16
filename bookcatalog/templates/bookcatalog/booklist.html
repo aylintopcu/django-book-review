@@ -1,0 +1,106 @@
+{% extends 'bookcatalog/index.html' %}
+
+{% load static %}
+
+{% block search_bar %}
+	<div class="top-search">
+		<form method="GET" action="{% url 'bookcatalog:search' %}" style="width: 1100px">
+			<input type="text" name="search" placeholder="Search for a book or author">
+		</form>
+	</div>
+{% endblock search_bar %}
+
+{% block content %}
+	<div class="buster-light">
+		<div class="hero common-hero">
+			<div class="container">
+				<div class="row">
+					<div class="col-md-12">
+						<div class="hero-ct">
+							<br><br>
+							<h1>Books</h1>
+							<ul class="breadcumb">
+								<li class="active"><a href={% url 'index' %}>Home</a></li>
+								<li> <span class="ion-ios-arrow-right"></span>Books</li>
+							</ul>
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
+		<div class="page-single">
+			<div class="container">
+				<div class="row ipad-width">
+					<div class="col-md-8 col-sm-12 col-xs-12">
+						<div class="topbar-filter">
+							<p>Found <span>{{ num_books }} book{{ num_books|pluralize }}</span></p>
+						</div>
+						<div class="flex-wrap-movielist">
+							{% for book in page_obj %}
+								<div class="movie-item-style-2 movie-item-style-1">
+									<img src={{ book.cover_page_url }} style="height: 250px;">
+									<div class="hvr-inner">
+										<a href={% url 'bookcatalog:book_detail' book.pk %}> Details <i class="ion-android-arrow-dropright"></i></a>
+									</div>
+									<div class="mv-item-infor">
+										<h6><a href={% url 'bookcatalog:book_detail' book.pk %}>{{ book.title }}</a></h6>
+										<p class="rate"><i class="ion-android-star"></i><span>{% if book.avg_rating != 0 %}{{ book.avg_rating }}{% else %} - {% endif %}</span> /5</p>
+									</div>
+								</div>
+							{% endfor %}
+						</div>		
+						<div class="topbar-filter">
+							<label>Books per page: 20</label>
+
+							<div class="pagination2">
+								<span>Page {{ page_obj.number }} of {{ page_obj.paginator.num_pages }}:</span>
+
+								{% if page_obj.has_previous %}
+									<a href="?{% if search %}search={{ search }}&{% elif book_rating %}rating={{ book_rating }}&{% endif %}page={{ page_obj.previous_page_number }}"><i class="ion-arrow-left-b"></i></a>
+									{% if page_obj.number != 2 %}
+										<a href="?page=1">1</a>
+										<a class="disabled" href="#">...</a>
+									{% endif %}
+									<a href="?{% if search %}search={{ search }}&{% elif book_rating %}rating={{ book_rating }}&{% endif %}page={{ page_obj.previous_page_number }}">{{ page_obj.previous_page_number }}</a>
+								{% endif %}
+
+								<a class="active" href="?{% if search %}search={{ search }}&{% elif book_rating %}rating={{ book_rating }}&{% endif %}page={{ page_obj.number }}">{{ page_obj.number }}</a>
+
+								{% if page_obj.has_next %}
+									<a href="?{% if search %}search={{ search }}&{% elif book_rating %}rating={{ book_rating }}&{% endif %}page={{ page_obj.next_page_number }}">{{ page_obj.next_page_number }}</a>
+									{% if page_obj.next_page_number != page_obj.paginator.num_pages %}
+										<a class="disabled" href="#">...</a>
+										<a href="?{% if search %}search={{ search }}&{% elif book_rating %}rating={{ book_rating }}&{% endif %}page={{ page_obj.paginator.num_pages }}">{{ page_obj.paginator.num_pages }}</a>
+									{% endif %}
+									<a href="?{% if search %}search={{ search }}&{% elif book_rating %}rating={{ book_rating }}&{% endif %}page={{ page_obj.next_page_number }}"><i class="ion-arrow-right-b"></i></a>
+								{% endif %}
+							</div>
+						</div>
+					</div>
+					<div class="col-md-4 col-sm-12 col-xs-12">
+						<div class="sidebar">
+							<div class="searh-form">
+								<h4 class="sb-title">Filter Books</h4>
+								<form class="form-style-1" method="GET" action="{% url 'bookcatalog:rating_filter' %}">
+									<div class="row">
+										<div class="col-md-12 form-it">
+											<label>Rating</label>
+											<select name="rating">
+												<option value="" disabled selected hidden>Select rating range</option>
+												<option value="3">3+</option>
+												<option value="3.5">3.5+</option>
+												<option value="4">4+</option>
+												<option value="4.5">4.5+</option>
+											</select>
+											<input class="submit" type="submit" value="Filter" style="margin-top: 20px;">
+										</div>
+									</div>
+								</form>
+							</div>
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+{% endblock content %}

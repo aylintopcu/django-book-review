@@ -1,0 +1,20 @@
+{% extends 'bookcatalog/profile.html' %}
+
+{% load static %}
+
+{% block title %}Create Reading List{% endblock title %}
+
+{% block profile_content %}
+    <div class="col-md-9 col-sm-12 col-xs-12">
+        <div class="form-style-1 user-pro" action="#">
+            <h4>Create New Reading List</h4>
+            {% if user.username == reader.user.username %}								
+                <form class="d-flex" method="POST">
+                    {% csrf_token %}
+                    <input class="form-control" type="text" name="reading_list" placeholder="Books" aria-label="Reading List" style="margin: 10px; width: 300px; height: 40px;">
+                    <button type="submit" class="redbtn" style="margin: 10px">Create New Reading List</button>
+                </form>
+            {% endif %}
+        </div>
+    </div>
+{% endblock profile_content %}

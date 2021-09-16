@@ -1,0 +1,30 @@
+{% extends 'bookcatalog/profile.html' %}
+
+{% load static %}
+
+{% block title %}{{ reading_list.list_name }}{% endblock title %}
+
+{% block search_bar %}{% endblock search_bar %}
+
+{% block profile_content %}
+	<div class="col-md-9 col-sm-12 col-xs-12">
+		<h2>{{ reading_list.list_name }}</h2>
+		<div class="topbar-filter user">
+			<p>Found <span>{{ num_books }} book{{ num_books|pluralize }}</span></p>
+		</div>
+		<div class="flex-wrap-movielist grid-fav">
+			{% for book in page_obj %}
+				<div class="movie-item-style-2 movie-item-style-1 style-3">
+					<img src={{ book.book.cover_page_url }} style="height: 225px;">
+					<div class="hvr-inner">
+						<a href={% url 'bookcatalog:book_detail' book.book.pk %}>Details<i class="ion-android-arrow-dropright"></i> </a>
+					</div>
+					<div class="mv-item-infor">
+						<h6><a href={% url 'bookcatalog:book_detail' book.book.pk %}>{{ book.book.title }}</a></h6>
+						<p class="rate"><i class="ion-android-star"></i><span>{% if book.book.avg_rating != 0 %}{{ book.book.avg_rating }}{% else %} - {% endif %}</span> /5</p>
+					</div>
+				</div>
+			{% endfor %}
+		</div>
+	</div>
+{% endblock profile_content %}

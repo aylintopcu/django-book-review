@@ -1,0 +1,20 @@
+{% extends 'bookcatalog/profile.html' %}
+
+{% load static %}
+
+{% block title %}Friends{% endblock title %}
+
+{% block profile_content %}
+    <div class="col-md-9 col-sm-12 col-xs-12">
+        {% for friend in reader_friends %}
+            <div class="col-md-4">
+                <div class="ceb-item-style-2">
+                    <i class="far fa-user fa-4x"></i>
+                    <div class="ceb-infor">
+                        <h2><a href="{% url 'bookcatalog:profile' friend.friend.user.username %}">{{ friend.friend.user.username }}</a></h2>
+                    </div>
+                </div>
+            </div>
+        {% endfor %}
+    </div>
+{% endblock profile_content %}

@@ -1,0 +1,39 @@
+{% extends 'accounts/base.html' %}
+
+{% load crispy_forms_tags %}
+
+{% block title %}Sign Up{% endblock title %}
+
+{% block content %}
+    {% if user.is_authenticated %}
+        <h1>You need to log out to sign up as a new user!</h1>
+    {% else %}
+        <div class="container">
+            <div class="col-lg-4 col-md-6 col-sm-8" style="margin: auto; margin-top: 50px;">
+                <div class="card">
+                    <div class="card-body">
+                        <h3 class="card-title">Sign Up</h3>
+                        <form method="POST" novalidate>
+                            {% csrf_token %}
+                            {{ sign_up_form|crispy }}                  
+                            <button class="btn btn-primary" type="submit">Sign Up</button>
+                        </form>
+                        {% if form.errors %}
+                            {% for field in form %}
+                                {% for error in field.errors %}
+                                    <p> {{ error }} </p>
+                                {% endfor %}
+                            {% endfor %}
+                        {% endif %}
+
+                        {% if form.non_field_errors %}
+                            {% for error in form.non_field_errors %}
+                                <p> {{ error }} </p>
+                            {% endfor %}
+                        {% endif %}
+                    </div>
+                </div>
+            </div>
+        </div>
+    {% endif %}
+{% endblock %}

@@ -1,0 +1,48 @@
+{% extends 'accounts/base.html' %}
+
+{% load crispy_forms_tags %}
+
+{% block title %}Login{% endblock %}
+
+{% block content %}
+    {% if user.is_authenticated %}
+        <h1>You're already logged in!</h1>
+    {% else %}
+        <div class="container">
+            <div class="col-lg-4 col-md-6 col-sm-8" style="margin: auto; margin-top: 100px;">
+                <div class="card">
+                    <div class="card-body">
+                        <h3 class="card-title">Login</h3>
+                        <div class="container py-5">
+                            <form method="POST" novalidate>
+                                {% csrf_token %}
+                                {{ login_form|crispy }}
+                                <button class="btn btn-primary" type="submit">Login</button>
+                            </form>
+                            {% if form.errors %}
+                                {% for field in form %}
+                                    {% for error in field.errors %}
+                                        <p> {{ error }} </p>
+                                    {% endfor %}
+                                {% endfor %}
+                            {% endif %}
+                            {% if form.non_field_errors %}
+                                {% for error in form.non_field_errors %}
+                                    <p> {{ error }} </p>
+                                {% endfor %}
+                            {% endif %}
+                        </div>
+                    </div>
+                    <div class="card-footer text-muted text-center">
+                        <a href="{% url 'accounts:signup' %}">Sign up</a>
+                    </div>
+                </div>
+                <div class="text-center py-2">
+                    <small>
+                        <a href="{% url 'accounts:password_reset' %}" class="text-muted">Forgot your password?</a>
+                    </small>
+                </div>
+            </div>
+        </div>
+    {% endif %}
+{% endblock content %}

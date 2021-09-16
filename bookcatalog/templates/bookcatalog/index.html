@@ -1,0 +1,228 @@
+<!DOCTYPE html>
+<html lang="en" class="no-js">
+	<head>
+		<title>{% block title %}Books{% endblock title %}</title>
+		<meta charset="UTF-8">
+		<meta name="description" content="">
+		<meta name="keywords" content="">
+		<meta name="author" content="">
+		<link rel="profile" href="#">
+
+		<link rel="stylesheet" href='http://fonts.googleapis.com/css?family=Dosis:400,700,500|Nunito:300,400,600' />
+		<meta name=viewport content="width=device-width, initial-scale=1">
+		<meta name="format-detection" content="telephone-no">
+
+		{% load static %}
+
+		{% block style %}{% endblock style %}
+ 
+		<link href="{% static 'bookcatalog/css/style.css' %}" rel="stylesheet">
+		<link href="{% static 'bookcatalog/css/plugins.css' %}" rel="stylesheet">
+		<script src="{% static 'fontawesome_free/js/all.min.js' %}"></script>
+		<script src="{% static 'bookcatalog/js/jquery.js' %}" type="text/javascript"></script>
+		<script src="{% static 'bookcatalog/js/plugins.js' %}" type="text/javascript"></script>
+		<script src="{% static 'bookcatalog/js/plugins2.js' %}" type="text/javascript"></script>
+		<script src="{% static 'bookcatalog/js/custom.js' %}" type="text/javascript"></script>
+
+		
+	</head>
+
+	<body>		
+		<header class="ht-header">
+			<div class="container">
+				<nav class="navbar navbar-default navbar-custom">
+					<div class="navbar-header logo">
+						<div class="navbar-toggle" data-toggle="collapse" data-target="#bs-example-navbar-collapse-1">
+							<span class="sr-only">Toggle navigation</span>
+							<div id="nav-icon1">
+								<span></span>
+								<span></span>
+								<span></span>
+							</div>
+						</div>
+						<a href={% url 'index' %}><i class="fas fa-book fa-5x" style="color: rgb(165, 25, 25)"></i></a>
+					</div>
+					<div class="collapse navbar-collapse flex-parent" id="bs-example-navbar-collapse-1">
+						<ul class="nav navbar-nav flex-child-menu menu-left">
+							<li class="hidden">
+								<a href="#page-top"></a>
+							</li>
+							<li><a href="{% url 'bookcatalog:book_list' %}">All Books</a></li>
+							<li><a href="{% url 'bookcatalog:genre_book_list' genre=1 %}">Science Fiction Books</a></li>
+							<li><a href="{% url 'bookcatalog:genre_book_list' genre=2 %}">Horror Books</a></li>
+							<li><a href="{% url 'bookcatalog:genre_book_list' genre=3 %}">Sports Books</a></li>
+							<li><a href="{% url 'bookcatalog:profiles_list' %}">Profiles</a></li>
+						</ul>
+						<ul class="nav navbar-nav flex-child-menu menu-right">
+							{% if user.is_authenticated %}
+								<li class="dropdown first">
+									<a class="btn btn-default dropdown-toggle lv1" data-toggle="dropdown" data-hover="dropdown">
+										<i class="fas fa-user"></i> {{ user.username }} <i class="fa fa-angle-down" aria-hidden="true"></i>
+									</a>
+									<ul class="dropdown-menu level1">
+										<li><a href="{% url 'bookcatalog:profile' user.username %}">Profile</a></li>
+										<li><a href="{% url 'accounts:password_change' %}">Change Password</a></li>
+										<li><a href="{% url 'accounts:logout' %}">Log Out</a></li>
+									</ul>
+								</li>
+							{% else %}
+								<li><a href="{% url 'accounts:login' %}" class="btn">Login</a></li>
+								<li><a href="{% url 'accounts:signup' %}" class="redbtn">Sign Up</a></li>
+							{% endif %}
+						</ul>
+					</div>
+				</nav>
+				{% block search_bar %}{% endblock search_bar %}
+			</div>
+		</header>
+	{% block content %}
+		<div class="slider movie-items">
+			<div class="container"></div>
+		</div>
+
+		<div class="buster-light">
+			<div class="movie-items full-width">
+				<div class="row">
+					<div class="col-md-12">
+						<!-- {% if user.is_authenticated %}
+							<div class="title-hd">
+								<h2>Recommended Books For You</h2>
+							</div>
+							<div class="tabs">
+								<div class="tab-content">
+									<div id="tab1-h2" class="tab active">
+										<div class="flex-wrap-movielist">
+											{% for book in recommended_books %}
+												<div class="movie-item-style-2 movie-item-style-1">
+													<img src={{ book.cover_page_url }} style="height: 250px;">
+													<div class="hvr-inner">
+														<a href={% url 'bookcatalog:book_detail' book.pk %}> Details <i class="ion-android-arrow-dropright"></i></a>
+													</div>
+													<div class="mv-item-infor">
+														<h6><a href={% url 'bookcatalog:book_detail' book.pk %}>{{ book.title }}</a></h6>
+														<p class="rate"><i class="ion-android-star"></i><span>{% if book.avg_rating != 0 %}{{ book.avg_rating }}{% else %} - {% endif %}</span> /5</p>
+													</div>
+												</div>
+											{% endfor %}
+										</div>
+									</div>
+								</div>
+							</div>
+						{% endif %} -->
+						<div class="title-hd">
+							<h2>All Books</h2>
+							<a href="{% url 'bookcatalog:book_list' %}" class="viewall">View all <i class="ion-ios-arrow-right"></i></a>
+						</div>
+						<div class="tabs">
+							<div class="tab-content">
+								<div id="tab1-h2" class="tab active">
+									<div class="flex-wrap-movielist">
+										{% for book in books %}
+											<div class="movie-item-style-2 movie-item-style-1">
+												<img src={{ book.cover_page_url }} style="height: 250px;">
+												<div class="hvr-inner">
+													<a href={% url 'bookcatalog:book_detail' book.pk %}> Details <i class="ion-android-arrow-dropright"></i></a>
+												</div>
+												<div class="mv-item-infor">
+													<h6><a href={% url 'bookcatalog:book_detail' book.pk %}>{{ book.title }}</a></h6>
+													<p class="rate"><i class="ion-android-star"></i><span>{% if book.avg_rating != 0 %}{{ book.avg_rating }}{% else %} - {% endif %}</span> /5</p>
+												</div>
+											</div>
+										{% endfor %}
+									</div>
+								</div>
+							</div>
+						</div>
+						<div class="title-hd">
+							<h2>Science Fiction</h2>
+							<a href="{% url 'bookcatalog:genre_book_list' genre=1 %}" class="viewall">View all <i class="ion-ios-arrow-right"></i></a>
+						</div>
+						<div class="tabs">
+							<div class="tab-content">
+								<div id="tab21-h2" class="tab active">
+									<div class="flex-wrap-movielist">
+										{% for book in science_fiction_books %}
+											<div class="movie-item-style-2 movie-item-style-1">
+												<img src={{ book.cover_page_url }} style="height: 250px;">
+												<div class="hvr-inner">
+													<a href={% url 'bookcatalog:book_detail' book.pk %}> Details <i class="ion-android-arrow-dropright"></i></a>
+												</div>
+												<div class="mv-item-infor">
+													<h6><a href={% url 'bookcatalog:book_detail' book.pk %}>{{ book.title }}</a></h6>
+													<p class="rate"><i class="ion-android-star"></i><span>{% if book.avg_rating != 0 %}{{ book.avg_rating }}{% else %} - {% endif %}</span> /5</p>
+												</div>
+											</div>
+										{% endfor %}
+									</div>
+								</div>
+							</div>
+						</div>
+						<div class="title-hd">
+							<h2>Horror</h2>
+							<a href="{% url 'bookcatalog:genre_book_list' genre=2 %}" class="viewall">View all <i class="ion-ios-arrow-right"></i></a>
+						</div>
+						<div class="tabs">
+							<div class="tab-content">
+								<div id="tab21-h2" class="tab active">
+									<div class="flex-wrap-movielist">
+										{% for book in horror_books %}
+											<div class="movie-item-style-2 movie-item-style-1">
+												<img src={{ book.cover_page_url }} style="height: 250px;">
+												<div class="hvr-inner">
+													<a href={% url 'bookcatalog:book_detail' book.pk %}> Details <i class="ion-android-arrow-dropright"></i></a>
+												</div>
+												<div class="mv-item-infor">
+													<h6><a href={% url 'bookcatalog:book_detail' book.pk %}>{{ book.title }}</a></h6>
+													<p class="rate"><i class="ion-android-star"></i><span>{% if book.avg_rating != 0 %}{{ book.avg_rating }}{% else %} - {% endif %}</span> /5</p>
+												</div>
+											</div>
+										{% endfor %}
+									</div>
+								</div>
+							</div>
+						</div>
+						<div class="title-hd">
+							<h2>Sports</h2>
+							<a href="{% url 'bookcatalog:genre_book_list' genre=3 %}" class="viewall">View all <i class="ion-ios-arrow-right"></i></a>
+						</div>
+						<div class="tabs">
+							<div class="tab-content">
+								<div id="tab21-h2" class="tab active">
+									<div class="flex-wrap-movielist">
+										{% for book in sports_books %}
+											<div class="movie-item-style-2 movie-item-style-1">
+												<img src={{ book.cover_page_url }} style="height: 250px;">
+												<div class="hvr-inner">
+													<a href={% url 'bookcatalog:book_detail' book.pk %}> Details <i class="ion-android-arrow-dropright"></i></a>
+												</div>
+												<div class="mv-item-infor">
+													<h6><a href={% url 'bookcatalog:book_detail' book.pk %}>{{ book.title }}</a></h6>
+													<p class="rate"><i class="ion-android-star"></i><span>{% if book.avg_rating != 0 %}{{ book.avg_rating }}{% else %} - {% endif %}</span> /5</p>
+												</div>
+											</div>
+										{% endfor %}
+									</div>
+								</div>
+							</div>
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
+	{% endblock content %}
+		<footer class="ht-footer">
+			<div class="container">
+				<div class="flex-parent-ft">
+					<div class="flex-child-ft item1">
+						<a href={% url 'index' %}><i class="fas fa-book fa-5x" style="color: rgb(165, 25, 25)"></i></a>
+					</div>
+				</div>
+			</div>
+			<div class="ft-copyright">
+				<div class="backtotop">
+					<p><a href="#" id="back-to-top">Back to top  <i class="ion-ios-arrow-thin-up"></i></a></p>
+				</div>
+			</div>
+		</footer>
+	</body>
+</html>
